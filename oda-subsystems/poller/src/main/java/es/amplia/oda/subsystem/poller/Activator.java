@@ -1,9 +1,6 @@
 package es.amplia.oda.subsystem.poller;
 
-import es.amplia.oda.core.commons.utils.ConfigurableBundle;
-import es.amplia.oda.core.commons.utils.ConfigurableBundleImpl;
-import es.amplia.oda.core.commons.utils.DatastreamsGettersLocator;
-import es.amplia.oda.core.commons.utils.DatastreamsGettersLocatorOsgi;
+import es.amplia.oda.core.commons.utils.*;
 import es.amplia.oda.event.api.EventDispatcherProxy;
 
 import org.osgi.framework.BundleActivator;

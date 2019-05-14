@@ -1,6 +1,7 @@
 package es.amplia.oda.subsystem.poller;
 
 import es.amplia.oda.core.commons.utils.ConfigurableBundleImpl;
+import es.amplia.oda.core.commons.utils.DatastreamsGetterFinderImpl;
 import es.amplia.oda.core.commons.utils.DatastreamsGettersLocatorOsgi;
 import es.amplia.oda.event.api.EventDispatcherProxy;
 import org.junit.Test;
@@ -11,7 +12,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -45,8 +45,6 @@ public class ActivatorTest {
 	Bundle mockedBundle;
 	@Mock
 	ScheduledExecutorService mockedExecutor;
-	@Mock
-	Logger mockedLogger;
 
 	@Test
 	public void testStart() throws Exception {

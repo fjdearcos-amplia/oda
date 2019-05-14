@@ -1,4 +1,4 @@
-package es.amplia.oda.subsystem.poller;
+package es.amplia.oda.core.commons.utils;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.utils.DevicePattern;
@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 import java.util.Set;
 
-interface DatastreamsGetterFinder {
+public interface DatastreamsGetterFinder {
     @Data
     class Return
     {
@@ -17,4 +17,6 @@ interface DatastreamsGetterFinder {
     }
 
     Return getGettersSatisfying(DevicePattern deviceIdPattern, Set<String> datastreamIdentifiers);
+
+    List<DatastreamsGetter> getGettersOfDevice(String deviceId);
 }

@@ -1,13 +1,12 @@
-package es.amplia.oda.subsystem.poller;
+package es.amplia.oda.core.commons.utils;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
-import es.amplia.oda.core.commons.utils.DatastreamsGettersLocator;
-import es.amplia.oda.core.commons.utils.DevicePattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class DatastreamsGetterFinderImpl implements DatastreamsGetterFinder {
@@ -16,7 +15,7 @@ public class DatastreamsGetterFinderImpl implements DatastreamsGetterFinder {
 
     private final DatastreamsGettersLocator datastreamsGettersLocator;
 
-    DatastreamsGetterFinderImpl(DatastreamsGettersLocator datastreamsGettersLocator) {
+    public DatastreamsGetterFinderImpl(DatastreamsGettersLocator datastreamsGettersLocator) {
         this.datastreamsGettersLocator = datastreamsGettersLocator;
     }
 
@@ -27,7 +26,7 @@ public class DatastreamsGetterFinderImpl implements DatastreamsGetterFinder {
         try {
             final Set<String> notFoundIds = new HashSet<>(datastreamIdentifiers);
             List<DatastreamsGetter> providers = datastreamsGettersLocator.getDatastreamsGetters().stream().
-                    filter(dsp-> !Collections.disjoint(Collections.singleton(dsp.getDatastreamIdSatisfied()),
+                    filter(dsp-> !java.util.Collections.disjoint(java.util.Collections.singleton(dsp.getDatastreamIdSatisfied()),
                                      datastreamIdentifiers)).
                     filter(dsp-> dsp.getDevicesIdManaged().stream().anyMatch(deviceIdPattern::match)).
                     peek(dsp-> notFoundIds.remove(dsp.getDatastreamIdSatisfied())).
@@ -38,5 +37,12 @@ public class DatastreamsGetterFinderImpl implements DatastreamsGetterFinder {
                     datastreamIdentifiers, e);
             return new Return(Collections.emptyList(), new HashSet<>(datastreamIdentifiers));
         }
+    }
+
+    @Override
+    public List<DatastreamsGetter> getGettersOfDevice(String deviceId) {
+        return datastreamsGettersLocator.getDatastreamsGetters().stream()
+                .filter(datastreamsGetter -> datastreamsGetter.getDevicesIdManaged().contains(deviceId))
+                .collect(Collectors.toList());
     }
 }
