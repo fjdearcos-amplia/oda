@@ -5,9 +5,20 @@ import lombok.Value;
 @Value
 public class DatastreamValue {
     public enum Status {
-        OK,
-        NOT_FOUND,
-        PROCESSING_ERROR
+        OK("Successful"),
+        NOT_FOUND("Not found"),
+        PROCESSING_ERROR("Error processing");
+
+        private final String userFriendlyName;
+
+        Status(String userFriendlyName) {
+            this.userFriendlyName = userFriendlyName;
+        }
+
+        @Override
+        public String toString() {
+            return userFriendlyName;
+        }
     }
 
     private String deviceId;
