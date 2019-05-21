@@ -1,10 +1,12 @@
-package es.amplia.oda.subsystem.realtimestatemanager;
+package es.amplia.oda.statemanager.realtime;
 
-import es.amplia.oda.core.commons.interfaces.StateManager;
 import es.amplia.oda.core.commons.utils.*;
+import es.amplia.oda.statemanager.api.StateManager;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+
 
 public class Activator implements BundleActivator {
 

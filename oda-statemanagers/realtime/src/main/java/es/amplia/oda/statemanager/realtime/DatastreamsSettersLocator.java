@@ -1,4 +1,4 @@
-package es.amplia.oda.core.commons.utils;
+package es.amplia.oda.statemanager.realtime;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
 

@@ -1,19 +1,18 @@
 package es.amplia.oda.operation.get;
 
-import es.amplia.oda.core.commons.osgi.proxies.StateManagerProxy;
 import es.amplia.oda.operation.api.OperationGetDeviceParameters;
+import es.amplia.oda.statemanager.api.StateManagerProxy;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;

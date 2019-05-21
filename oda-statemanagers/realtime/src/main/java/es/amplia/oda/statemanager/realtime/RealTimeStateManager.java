@@ -1,12 +1,11 @@
-package es.amplia.oda.subsystem.realtimestatemanager;
+package es.amplia.oda.statemanager.realtime;
 
-import es.amplia.oda.core.commons.interfaces.DatastreamValue;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
-import es.amplia.oda.core.commons.interfaces.StateManager;
 import es.amplia.oda.core.commons.utils.DatastreamsGetterFinder;
-import es.amplia.oda.core.commons.utils.DatastreamsSettersFinder;
 import es.amplia.oda.core.commons.utils.DevicePattern;
+import es.amplia.oda.statemanager.api.DatastreamValue;
+import es.amplia.oda.statemanager.api.StateManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

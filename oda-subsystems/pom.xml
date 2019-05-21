@@ -11,7 +11,6 @@
     <modules>
         <module>poller</module>
         <module>sshserver</module>
-        <module>realtimestatemanager</module>
     </modules>
 
     <parent>

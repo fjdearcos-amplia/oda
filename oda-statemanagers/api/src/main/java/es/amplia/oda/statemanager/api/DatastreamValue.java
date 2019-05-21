@@ -1,4 +1,4 @@
-package es.amplia.oda.core.commons.interfaces;
+package es.amplia.oda.statemanager.api;
 
 import lombok.Value;
 

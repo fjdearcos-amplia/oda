@@ -39,6 +39,7 @@
         <module>oda-comms</module>
         <module>oda-hardware</module>
         <module>oda-datastreams</module>
+        <module>oda-statemanagers</module>
         <module>oda-services</module>
         <module>oda-subsystems</module>
         <module>oda-operations</module>
@@ -150,6 +151,16 @@
             </dependency>
             <dependency>
                 <groupId>es.amplia.oda.event</groupId>
+                <artifactId>api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>es.amplia.oda.dispatcher</groupId>
+                <artifactId>opengate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>es.amplia.oda.statemanager</groupId>
                 <artifactId>api</artifactId>
                 <version>${project.version}</version>
             </dependency>

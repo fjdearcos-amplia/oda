@@ -1,4 +1,4 @@
-package es.amplia.oda.core.commons.interfaces;
+package es.amplia.oda.statemanager.api;
 
 import java.util.Map;
 import java.util.Set;

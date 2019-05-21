@@ -1,8 +1,6 @@
-package es.amplia.oda.core.commons.osgi.proxies;
+package es.amplia.oda.statemanager.api;
 
-import es.amplia.oda.core.commons.interfaces.DatastreamValue;
-import es.amplia.oda.core.commons.interfaces.StateManager;
-
+import es.amplia.oda.core.commons.osgi.proxies.OsgiServiceProxy;
 import org.osgi.framework.BundleContext;
 
 import java.util.Map;
