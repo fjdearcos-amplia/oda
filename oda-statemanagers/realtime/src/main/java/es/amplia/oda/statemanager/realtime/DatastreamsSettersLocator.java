@@ -4,7 +4,7 @@ import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
 
 import java.util.List;
 
-public interface DatastreamsSettersLocator {
+interface DatastreamsSettersLocator extends AutoCloseable {
     /**
      * This function must return all the DatastreamsSetter currently in the system.
      * In the future, maybe we can pass parameters so that the returned list is filtered of not useful elements.

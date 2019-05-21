@@ -42,4 +42,8 @@ public class DatastreamsGettersLocatorOsgi implements DatastreamsGettersLocator 
         return returned;
     }
 
+    @Override
+    public void close() {
+        datastreamsGetterTracker.close();
+    }
 }

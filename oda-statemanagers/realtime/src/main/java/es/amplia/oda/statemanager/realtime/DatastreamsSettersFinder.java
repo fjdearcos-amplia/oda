@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Map;
 import java.util.Set;
 
-public interface DatastreamsSettersFinder {
+interface DatastreamsSettersFinder extends AutoCloseable {
     @Data
     class Return
     {

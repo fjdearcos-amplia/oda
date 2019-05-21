@@ -11,8 +11,8 @@
     <description>Real time State Manager for OpenGate Device Agent</description>
 
     <parent>
-        <artifactId>oda-subsystems</artifactId>
-        <groupId>es.amplia.oda.subsystem</groupId>
+        <artifactId>oda-statemanagers</artifactId>
+        <groupId>es.amplia.oda.statemanager</groupId>
         <version>3.25.1-SNAPSHOT</version>
     </parent>
 
@@ -78,6 +78,10 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>es.amplia.oda.core</groupId>
+            <artifactId>commons</artifactId>
         </dependency>
         <dependency>
             <groupId>es.amplia.oda.statemanager</groupId>

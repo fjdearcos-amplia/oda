@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DatastreamsSettersFinderImpl implements DatastreamsSettersFinder {
+class DatastreamsSettersFinderImpl implements DatastreamsSettersFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatastreamsSettersFinderImpl.class);
 
     private final DatastreamsSettersLocator datastreamsSettersLocator;
 
-    public DatastreamsSettersFinderImpl(DatastreamsSettersLocator datastreamsSettersLocator) {
+    DatastreamsSettersFinderImpl(DatastreamsSettersLocator datastreamsSettersLocator) {
         this.datastreamsSettersLocator = datastreamsSettersLocator;
     }
 
@@ -35,6 +35,15 @@ public class DatastreamsSettersFinderImpl implements DatastreamsSettersFinder {
             LOGGER.error("Exception when trying to determine providers satisfying {}/{}: {}", deviceId,
                     datastreamIdentifiers, e);
             return new Return(new HashMap<>(), datastreamIdentifiers);
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            datastreamsSettersLocator.close();
+        } catch (Exception e) {
+            LOGGER.warn("Error releasing Datastreams Setters Locator resource: ", e);
         }
     }
 }

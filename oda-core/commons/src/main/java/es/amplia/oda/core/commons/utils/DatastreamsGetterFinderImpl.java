@@ -45,4 +45,13 @@ public class DatastreamsGetterFinderImpl implements DatastreamsGetterFinder {
                 .filter(datastreamsGetter -> datastreamsGetter.getDevicesIdManaged().contains(deviceId))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void close() {
+        try {
+            datastreamsGettersLocator.close();
+        } catch (Exception e) {
+            LOGGER.warn("Error releasing Datastream Getters Locator resource: ", e);
+        }
+    }
 }

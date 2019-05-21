@@ -1,14 +1,13 @@
 package es.amplia.oda.core.commons.utils;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
-import es.amplia.oda.core.commons.utils.DevicePattern;
 
 import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
 
-public interface DatastreamsGetterFinder {
+public interface DatastreamsGetterFinder extends AutoCloseable {
     @Data
     class Return
     {

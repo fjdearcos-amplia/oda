@@ -10,15 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatastreamsSettersLocatorOsgi implements DatastreamsSettersLocator {
+class DatastreamsSettersLocatorOsgi implements DatastreamsSettersLocator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatastreamsSettersLocatorOsgi.class);
 
 
-    private ServiceTracker<DatastreamsSetter, DatastreamsSetter> datastreamsSetterTracker;
+    private final ServiceTracker<DatastreamsSetter, DatastreamsSetter> datastreamsSetterTracker;
 
-
-    public DatastreamsSettersLocatorOsgi(BundleContext bundleContext) {
+    DatastreamsSettersLocatorOsgi(BundleContext bundleContext) {
         datastreamsSetterTracker = new ServiceTracker<>(bundleContext, DatastreamsSetter.class, null);
         datastreamsSetterTracker.open();
     }
@@ -43,5 +42,10 @@ public class DatastreamsSettersLocatorOsgi implements DatastreamsSettersLocator 
         }
         LOGGER.debug("{} DatastreamsSetters currently registered in the system", returned.size());
         return returned;
+    }
+
+    @Override
+    public void close() {
+        datastreamsSetterTracker.close();
     }
 }
