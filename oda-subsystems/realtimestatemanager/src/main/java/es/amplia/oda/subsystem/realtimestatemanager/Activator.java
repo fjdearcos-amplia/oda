@@ -1,10 +1,7 @@
 package es.amplia.oda.subsystem.realtimestatemanager;
 
 import es.amplia.oda.core.commons.interfaces.StateManager;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinder;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinderImpl;
-import es.amplia.oda.core.commons.utils.DatastreamsGettersLocator;
-import es.amplia.oda.core.commons.utils.DatastreamsGettersLocatorOsgi;
+import es.amplia.oda.core.commons.utils.*;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -17,7 +14,9 @@ public class Activator implements BundleActivator {
     public void start(BundleContext bundleContext) {
         DatastreamsGettersLocator datastreamsGettersLocator = new DatastreamsGettersLocatorOsgi(bundleContext);
         DatastreamsGetterFinder datastreamsGetterFinder = new DatastreamsGetterFinderImpl(datastreamsGettersLocator);
-        StateManager stateManager = new RealTimeStateManager(datastreamsGetterFinder);
+        DatastreamsSettersLocator datastreamsSettersLocator = new DatastreamsSettersLocatorOsgi(bundleContext);
+        DatastreamsSettersFinder datastreamsSetterFinder = new DatastreamsSettersFinderImpl(datastreamsSettersLocator);
+        StateManager stateManager = new RealTimeStateManager(datastreamsGetterFinder, datastreamsSetterFinder);
         registration = bundleContext.registerService(StateManager.class, stateManager, null);
     }
 

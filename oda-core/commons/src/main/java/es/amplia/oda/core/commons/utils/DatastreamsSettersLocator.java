@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface DatastreamsSettersLocator {
     /**
-     * This function must return all the DatastreamsSetter currently in the system. It is useful for Test purposes.
+     * This function must return all the DatastreamsSetter currently in the system.
      * In the future, maybe we can pass parameters so that the returned list is filtered of not useful elements.
-     * But right now the DatastreamsSetters are registered in Osgi without filters, so it can not be done automatically.  
+     * But right now the DatastreamsSetters are registered in Osgi without filters, so it can not be done automatically.
      * @return The list of DatastreamsSetters currently in the system.
      */
     List<DatastreamsSetter> getDatastreamsSetters();

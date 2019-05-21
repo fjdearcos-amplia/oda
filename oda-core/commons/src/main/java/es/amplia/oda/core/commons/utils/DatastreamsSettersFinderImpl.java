@@ -12,14 +12,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DatastreamsSettersFinderImpl implements DatastreamsSettersFinder {
-    private static final Logger logger = LoggerFactory.getLogger(DatastreamsSettersFinderImpl.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatastreamsSettersFinderImpl.class);
 
     private final DatastreamsSettersLocator datastreamsSettersLocator;
 
     public DatastreamsSettersFinderImpl(DatastreamsSettersLocator datastreamsSettersLocator) {
         this.datastreamsSettersLocator = datastreamsSettersLocator;
     }
-    
 
     @Override
     public Return getSettersSatisfying(String deviceId, Set<String> datastreamIdentifiers) {
@@ -32,9 +32,9 @@ public class DatastreamsSettersFinderImpl implements DatastreamsSettersFinder {
                     .collect(Collectors.toMap(DatastreamsSetter::getDatastreamIdSatisfied, dsp -> dsp));
             return new Return(providers, notFoundIds);
         } catch (Exception e) {
-            logger.error("Exception when trying to determine providers satisfying {}/{}: {}", deviceId, datastreamIdentifiers, e);
+            LOGGER.error("Exception when trying to determine providers satisfying {}/{}: {}", deviceId,
+                    datastreamIdentifiers, e);
             return new Return(new HashMap<>(), datastreamIdentifiers);
         }
     }
-
 }
