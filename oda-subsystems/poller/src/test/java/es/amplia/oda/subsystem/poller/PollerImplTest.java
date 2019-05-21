@@ -2,8 +2,8 @@ package es.amplia.oda.subsystem.poller;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter.CollectedValue;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinder;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinderImpl;
+import es.amplia.oda.core.commons.utils.DatastreamsGettersFinder;
+import es.amplia.oda.core.commons.utils.DatastreamsGettersFinderImpl;
 import es.amplia.oda.core.commons.utils.DevicePattern;
 import es.amplia.oda.event.api.EventDispatcherProxy;
 
@@ -46,7 +46,7 @@ public class PollerImplTest {
     private PollerImpl collector;
 
     @Mock
-    private DatastreamsGetterFinderImpl datastreamsGettersFinder;
+    private DatastreamsGettersFinderImpl datastreamsGettersFinder;
     @Mock
     private DatastreamsGetter getterForId1;
     @Mock
@@ -57,7 +57,7 @@ public class PollerImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatastreamsGetterFinder.Return gettersForId1AndId2 = new DatastreamsGetterFinder.Return(Arrays.asList(getterForId1, getterForId2), asSet());
+        DatastreamsGettersFinder.Return gettersForId1AndId2 = new DatastreamsGettersFinder.Return(Arrays.asList(getterForId1, getterForId2), asSet());
         collector = new PollerImpl(datastreamsGettersFinder, eventDispatcher);
         futureForId1 = new CompletableFuture<>();
         futureForId2 = new CompletableFuture<>();
@@ -93,7 +93,7 @@ public class PollerImplTest {
         when(getterForId1.getDatastreamIdSatisfied()).thenReturn(ID1);
         Set<String> listWithId1Only = asSet(ID1);
         when(datastreamsGettersFinder.getGettersSatisfying(DEVICE_ID_PATTERN, listWithId1Only))
-                .thenReturn(new DatastreamsGetterFinder.Return(Collections.singletonList(getterForId1), asSet()));
+                .thenReturn(new DatastreamsGettersFinder.Return(Collections.singletonList(getterForId1), asSet()));
         
         collector.runFor(DEVICE_ID_PATTERN, listWithId1Only);
         futureForId1.complete(
@@ -103,7 +103,7 @@ public class PollerImplTest {
     @Test
     public void ifThereAreNoGetterSatisfyingAnIdListRunForDoesntDoAnything() {
         when(datastreamsGettersFinder.getGettersSatisfying(DEVICE_ID_PATTERN, ID1_AND_ID2))
-                .thenReturn(new DatastreamsGetterFinder.Return(Collections.emptyList(), ID1_AND_ID2));
+                .thenReturn(new DatastreamsGettersFinder.Return(Collections.emptyList(), ID1_AND_ID2));
         
         collector.runFor(DEVICE_ID_PATTERN, ID1_AND_ID2);
         

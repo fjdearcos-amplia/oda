@@ -1,5 +1,6 @@
 package es.amplia.oda.subsystem.poller;
 
+import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.utils.*;
 import es.amplia.oda.event.api.EventDispatcherProxy;
 
@@ -22,6 +23,7 @@ public class Activator implements BundleActivator {
 
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(NUM_THREADS);
 
+    private DatastreamsGettersFinderImpl datastreamsGetterFinder;
     private EventDispatcherProxy eventDispatcher;
     private ConfigurableBundle configurableBundle;
 
@@ -30,8 +32,9 @@ public class Activator implements BundleActivator {
     public void start(BundleContext bundleContext) {
         LOGGER.info("Starting Poller Subsystem");
 
-        DatastreamsGettersLocator datastreamsGettersLocator = new DatastreamsGettersLocatorOsgi(bundleContext);
-        DatastreamsGetterFinder datastreamsGetterFinder = new DatastreamsGetterFinderImpl(datastreamsGettersLocator);
+        ServiceLocator<DatastreamsGetter> datastreamsGettersLocator =
+                new ServiceLocatorOsgi<>(bundleContext, DatastreamsGetter.class);
+        datastreamsGetterFinder = new DatastreamsGettersFinderImpl(datastreamsGettersLocator);
         eventDispatcher = new EventDispatcherProxy(bundleContext);
         Poller poller = new PollerImpl(datastreamsGetterFinder, eventDispatcher);
         PollerConfigurationUpdateHandler configHandler = new PollerConfigurationUpdateHandler(executor, poller);
@@ -46,6 +49,7 @@ public class Activator implements BundleActivator {
 
         configurableBundle.close();
         stopPendingOperations();
+        datastreamsGetterFinder.close();
         eventDispatcher.close();
 
         LOGGER.info("Poller Subsystem stopped");

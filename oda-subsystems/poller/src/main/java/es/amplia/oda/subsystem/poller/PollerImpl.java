@@ -2,8 +2,8 @@ package es.amplia.oda.subsystem.poller;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter.CollectedValue;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinder;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinderImpl;
+import es.amplia.oda.core.commons.utils.DatastreamsGettersFinder;
+import es.amplia.oda.core.commons.utils.DatastreamsGettersFinderImpl;
 import es.amplia.oda.core.commons.utils.DevicePattern;
 import es.amplia.oda.event.api.Event;
 import es.amplia.oda.event.api.EventDispatcher;
@@ -18,10 +18,10 @@ class PollerImpl implements Poller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PollerImpl.class);
 
-    private final DatastreamsGetterFinder datastreamsGettersFinder;
+    private final DatastreamsGettersFinder datastreamsGettersFinder;
     private final EventDispatcher eventDispatcher;
 
-    PollerImpl(DatastreamsGetterFinder datastreamsGettersFinder, EventDispatcher eventDispatcher) {
+    PollerImpl(DatastreamsGettersFinder datastreamsGettersFinder, EventDispatcher eventDispatcher) {
         this.datastreamsGettersFinder = datastreamsGettersFinder;
         this.eventDispatcher = eventDispatcher;
     }
@@ -29,7 +29,7 @@ class PollerImpl implements Poller {
     @Override
     public void runFor(DevicePattern deviceIdPattern, Set<String> datastreamIds) {
         LOGGER.debug("runFor({},{})", deviceIdPattern, datastreamIds);
-        DatastreamsGetterFinderImpl.Return getters = datastreamsGettersFinder.getGettersSatisfying(deviceIdPattern, datastreamIds);
+        DatastreamsGettersFinderImpl.Return getters = datastreamsGettersFinder.getGettersSatisfying(deviceIdPattern, datastreamIds);
         if(!getters.getNotFoundIds().isEmpty()) {
             LOGGER.warn("No datastreamsGetters found for {}", getters.getNotFoundIds());
         }

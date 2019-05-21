@@ -2,7 +2,7 @@ package es.amplia.oda.statemanager.realtime;
 
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
-import es.amplia.oda.core.commons.utils.DatastreamsGetterFinder;
+import es.amplia.oda.core.commons.utils.DatastreamsGettersFinder;
 import es.amplia.oda.core.commons.utils.DevicePattern;
 import es.amplia.oda.statemanager.api.DatastreamValue;
 import es.amplia.oda.statemanager.api.StateManager;
@@ -18,12 +18,12 @@ class RealTimeStateManager implements StateManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RealTimeStateManager.class);
 
-    private final DatastreamsGetterFinder datastreamsGetterFinder;
+    private final DatastreamsGettersFinder datastreamsGettersFinder;
     private final DatastreamsSettersFinder datastreamsSettersFinder;
 
-    RealTimeStateManager(DatastreamsGetterFinder datastreamsGetterFinder,
+    RealTimeStateManager(DatastreamsGettersFinder datastreamsGettersFinder,
                          DatastreamsSettersFinder datastreamsSettersFinder) {
-        this.datastreamsGetterFinder = datastreamsGetterFinder;
+        this.datastreamsGettersFinder = datastreamsGettersFinder;
         this.datastreamsSettersFinder = datastreamsSettersFinder;
     }
 
@@ -37,8 +37,8 @@ class RealTimeStateManager implements StateManager {
     public CompletableFuture<Set<DatastreamValue>> getDatastreamsInformation(String deviceId, Set<String> datastreamIds) {
         LOGGER.debug("Getting values for device '{}': {}", deviceId, datastreamIds);
 
-        DatastreamsGetterFinder.Return finderReturn =
-                datastreamsGetterFinder.getGettersSatisfying(new DevicePattern(deviceId), datastreamIds);
+        DatastreamsGettersFinder.Return finderReturn =
+                datastreamsGettersFinder.getGettersSatisfying(new DevicePattern(deviceId), datastreamIds);
 
         Set<CompletableFuture<DatastreamValue>> values =
                 getNotFoundIdsAsFutures(deviceId, finderReturn.getNotFoundIds());
@@ -100,7 +100,7 @@ class RealTimeStateManager implements StateManager {
         LOGGER.debug("Getting all values for device '{}'", deviceId);
 
         Set<CompletableFuture<DatastreamValue>> values =
-                datastreamsGetterFinder.getGettersOfDevice(deviceId).stream()
+                datastreamsGettersFinder.getGettersOfDevice(deviceId).stream()
                         .map(datastreamsGetter -> getValueFromGetFutureHandlingExceptions(deviceId, datastreamsGetter))
                         .collect(Collectors.toSet());
 
