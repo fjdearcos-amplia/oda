@@ -24,4 +24,7 @@ interface DatastreamsSettersFinder extends AutoCloseable {
      *  of identifiers that no DatastreamsSetter manage.
      */
     Return getSettersSatisfying(String deviceId, Set<String> datastreamIdentifiers);
+
+    @Override
+    void close();
 }

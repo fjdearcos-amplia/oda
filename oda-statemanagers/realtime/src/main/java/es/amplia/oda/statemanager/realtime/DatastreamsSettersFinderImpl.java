@@ -42,10 +42,6 @@ class DatastreamsSettersFinderImpl implements DatastreamsSettersFinder {
 
     @Override
     public void close() {
-        try {
-            datastreamsSettersLocator.close();
-        } catch (Exception e) {
-            LOGGER.warn("Error releasing Datastreams Setters Locator resource: ", e);
-        }
+        datastreamsSettersLocator.close();
     }
 }

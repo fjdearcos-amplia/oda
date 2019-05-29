@@ -4,7 +4,10 @@ import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
 import es.amplia.oda.core.commons.utils.DatastreamsGettersFinder;
 import es.amplia.oda.core.commons.utils.DevicePattern;
+import es.amplia.oda.event.api.Event;
+import es.amplia.oda.event.api.EventDispatcher;
 import es.amplia.oda.statemanager.api.DatastreamValue;
+import es.amplia.oda.statemanager.api.EventHandler;
 import es.amplia.oda.statemanager.api.StateManager;
 
 import org.slf4j.Logger;
@@ -17,14 +20,23 @@ import java.util.stream.Collectors;
 class RealTimeStateManager implements StateManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RealTimeStateManager.class);
+    static final String VALUE_NOT_FOUND_ERROR = "Datastream has not value to set";
+
 
     private final DatastreamsGettersFinder datastreamsGettersFinder;
     private final DatastreamsSettersFinder datastreamsSettersFinder;
+    private final EventHandler eventHandler;
+    private final EventDispatcher eventDispatcher;
+
 
     RealTimeStateManager(DatastreamsGettersFinder datastreamsGettersFinder,
-                         DatastreamsSettersFinder datastreamsSettersFinder) {
+                         DatastreamsSettersFinder datastreamsSettersFinder,
+                         EventHandler eventHandler, EventDispatcher eventDispatcher) {
         this.datastreamsGettersFinder = datastreamsGettersFinder;
         this.datastreamsSettersFinder = datastreamsSettersFinder;
+        this.eventHandler = eventHandler;
+        this.eventDispatcher = eventDispatcher;
+        registerToEvents(eventHandler);
     }
 
     @Override
@@ -48,7 +60,7 @@ class RealTimeStateManager implements StateManager {
     }
 
     private Set<CompletableFuture<DatastreamValue>> getNotFoundIdsAsFutures(String deviceId,
-                                                                             Set<String> notFoundDatastreamIds) {
+                                                                            Set<String> notFoundDatastreamIds) {
         return notFoundDatastreamIds.stream()
                 .map(datastreamId -> createDatastreamNotFound(deviceId, datastreamId))
                 .map(CompletableFuture::completedFuture)
@@ -121,16 +133,18 @@ class RealTimeStateManager implements StateManager {
         DatastreamsSettersFinder.Return satisfyingSetters =
                 datastreamsSettersFinder.getSettersSatisfying(deviceId, datastreamValues.keySet());
 
+        HashMap<String, Object> valuesToSet = new HashMap<>(datastreamValues);
         Set<CompletableFuture<DatastreamValue>> values =
                 getNotFoundIdsAsFutures(deviceId, satisfyingSetters.getNotFoundIds());
-        values.addAll(getNotFoundValues(deviceId, datastreamValues));
-        values.addAll(setValues(deviceId, datastreamValues, satisfyingSetters.getSetters()));
+        valuesToSet.entrySet().removeIf(entry -> satisfyingSetters.getNotFoundIds().contains(entry.getKey()));
+        values.addAll(getNotFoundValues(deviceId, valuesToSet));
+        values.addAll(setValues(deviceId, valuesToSet, satisfyingSetters.getSetters()));
 
         return allOf(values);
     }
 
-    private Set<CompletableFuture<DatastreamValue>> getNotFoundValues(String deviceId, Map<String, Object> datastreamValues) {
-        return datastreamValues.entrySet().stream()
+    private Set<CompletableFuture<DatastreamValue>> getNotFoundValues(String deviceId, Map<String, Object> values) {
+        return values.entrySet().stream()
                 .filter(entry -> Objects.isNull(entry.getValue()))
                 .map(entry -> createValueNotFound(deviceId, entry.getKey()))
                 .map(CompletableFuture::completedFuture)
@@ -139,7 +153,7 @@ class RealTimeStateManager implements StateManager {
 
     private DatastreamValue createValueNotFound(String deviceId, String datastreamId) {
         return new DatastreamValue(deviceId, datastreamId, System.currentTimeMillis(), null,
-                DatastreamValue.Status.PROCESSING_ERROR, "Datastream has not value to set");
+                DatastreamValue.Status.PROCESSING_ERROR, VALUE_NOT_FOUND_ERROR);
     }
 
     private Set<CompletableFuture<DatastreamValue>> setValues(String deviceId, Map<String, Object> datastreamValues,
@@ -171,5 +185,25 @@ class RealTimeStateManager implements StateManager {
             return CompletableFuture.completedFuture(new DatastreamValue(deviceId, datastreamId,
                     System.currentTimeMillis(), null, DatastreamValue.Status.PROCESSING_ERROR, e.getMessage()));
         }
+    }
+
+    @Override
+    public void registerToEvents(EventHandler eventHandler) {
+        eventHandler.registerStateManager(this);
+    }
+
+    @Override
+    public void unregisterToEvents(EventHandler eventHandler) {
+        eventHandler.unregisterStateManager();
+    }
+
+    @Override
+    public void onReceivedEvent(Event event) {
+        eventDispatcher.publish(event);
+    }
+
+    @Override
+    public void close() {
+        unregisterToEvents(eventHandler);
     }
 }

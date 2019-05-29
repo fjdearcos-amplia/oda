@@ -1,6 +1,7 @@
 package es.amplia.oda.statemanager.api;
 
 import es.amplia.oda.core.commons.osgi.proxies.OsgiServiceProxy;
+import es.amplia.oda.event.api.Event;
 import org.osgi.framework.BundleContext;
 
 import java.util.Map;
@@ -38,6 +39,21 @@ public class StateManagerProxy implements StateManager, AutoCloseable {
     @Override
     public CompletableFuture<Set<DatastreamValue>> setDatastreamValues(String deviceId, Map<String, Object> datastreamValues) {
         return proxy.callFirst(stateManager -> stateManager.setDatastreamValues(deviceId, datastreamValues));
+    }
+
+    @Override
+    public void registerToEvents(EventHandler eventHandler) {
+        proxy.consumeFirst(stateManager -> stateManager.registerToEvents(eventHandler));
+    }
+
+    @Override
+    public void unregisterToEvents(EventHandler eventHandler) {
+        proxy.consumeFirst(stateManager -> stateManager.unregisterToEvents(eventHandler));
+    }
+
+    @Override
+    public void onReceivedEvent(Event event) {
+        proxy.consumeFirst(stateManager -> stateManager.onReceivedEvent(event));
     }
 
     @Override
