@@ -26,6 +26,7 @@ class GpioDatastreamsEventHandler extends DatastreamsEventHandler implements Aut
         this.datastreamId = datastreamId;
         this.pinIndex = pinIndex;
         this.gpioService = gpioService;
+        registerToEventSource();
     }
 
     @Override

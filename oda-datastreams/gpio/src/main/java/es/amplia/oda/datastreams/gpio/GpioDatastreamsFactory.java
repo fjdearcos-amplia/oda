@@ -7,21 +7,25 @@ import java.util.concurrent.Executor;
 
 class GpioDatastreamsFactory {
 
-    // Hide public constructor to avoid instantiation of this class
-    private GpioDatastreamsFactory() {}
+    private final GpioService gpioService;
+    private final EventPublisher eventPublisher;
+    private final Executor executor;
 
-    static GpioDatastreamsGetter createGpioDatastreamsGetter(String datastreamId, int pinIndex, GpioService gpioService,
-                                                             Executor executor) {
+    GpioDatastreamsFactory(GpioService gpioService, EventPublisher eventPublisher, Executor executor) {
+        this.gpioService = gpioService;
+        this.eventPublisher = eventPublisher;
+        this.executor = executor;
+    }
+
+    GpioDatastreamsGetter createGpioDatastreamsGetter(String datastreamId, int pinIndex) {
         return new GpioDatastreamsGetter(datastreamId, pinIndex, gpioService, executor);
     }
 
-    static GpioDatastreamsSetter createGpioDatastreamsSetter(String datastreamId, int pinIndex, GpioService gpioService,
-                                                             Executor executor) {
+    GpioDatastreamsSetter createGpioDatastreamsSetter(String datastreamId, int pinIndex) {
         return new GpioDatastreamsSetter(datastreamId, pinIndex, gpioService, executor);
     }
 
-    static GpioDatastreamsEventHandler createGpioDatastreamsEvent(EventPublisher eventPublisher, String datastreamId,
-                                                                  int pinIndex, GpioService gpioService) {
+    GpioDatastreamsEventHandler createGpioDatastreamsEvent(String datastreamId, int pinIndex) {
         return new GpioDatastreamsEventHandler(eventPublisher, datastreamId, pinIndex, gpioService);
     }
 }

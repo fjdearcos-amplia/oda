@@ -5,6 +5,7 @@ import es.amplia.oda.core.commons.interfaces.EventPublisher;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -28,6 +29,8 @@ public class GpioDatastreamsFactoryTest {
     private EventPublisher mockedEventPublisher;
     @Mock
     private Executor mockedExecutor;
+    @InjectMocks
+    private GpioDatastreamsFactory testFactory;
 
     @Mock
     private GpioDatastreamsGetter mockedGpioDatastreamsGetter;
@@ -40,9 +43,7 @@ public class GpioDatastreamsFactoryTest {
     public void testCreateGpioDatastreamsGetter() throws Exception {
         PowerMockito.whenNew(GpioDatastreamsGetter.class).withAnyArguments().thenReturn(mockedGpioDatastreamsGetter);
 
-        GpioDatastreamsGetter getter =
-                GpioDatastreamsFactory.createGpioDatastreamsGetter(TEST_DATASTREAM_ID, TEST_PIN_INDEX,
-                        mockedGpioService, mockedExecutor);
+        GpioDatastreamsGetter getter = testFactory.createGpioDatastreamsGetter(TEST_DATASTREAM_ID, TEST_PIN_INDEX);
 
         assertEquals(mockedGpioDatastreamsGetter, getter);
         PowerMockito.verifyNew(GpioDatastreamsGetter.class)
@@ -53,9 +54,7 @@ public class GpioDatastreamsFactoryTest {
     public void testCreateGpioDatastreamsSetter() throws Exception {
         PowerMockito.whenNew(GpioDatastreamsSetter.class).withAnyArguments().thenReturn(mockedGpioDatastreamsSetter);
 
-        GpioDatastreamsSetter setter =
-                GpioDatastreamsFactory.createGpioDatastreamsSetter(TEST_DATASTREAM_ID, TEST_PIN_INDEX,
-                        mockedGpioService, mockedExecutor);
+        GpioDatastreamsSetter setter = testFactory.createGpioDatastreamsSetter(TEST_DATASTREAM_ID, TEST_PIN_INDEX);
 
         assertEquals(mockedGpioDatastreamsSetter, setter);
         PowerMockito.verifyNew(GpioDatastreamsSetter.class)
@@ -66,9 +65,7 @@ public class GpioDatastreamsFactoryTest {
     public void testCreateGpioDatastreamsEvent() throws Exception {
         PowerMockito.whenNew(GpioDatastreamsEventHandler.class).withAnyArguments().thenReturn(mockedGpioDatastreamsEventHandler);
 
-        GpioDatastreamsEventHandler event =
-                GpioDatastreamsFactory.createGpioDatastreamsEvent(mockedEventPublisher, TEST_DATASTREAM_ID,
-                        TEST_PIN_INDEX, mockedGpioService);
+        GpioDatastreamsEventHandler event = testFactory.createGpioDatastreamsEvent(TEST_DATASTREAM_ID, TEST_PIN_INDEX);
 
         assertEquals(mockedGpioDatastreamsEventHandler, event);
         PowerMockito.verifyNew(GpioDatastreamsEventHandler.class).withArguments(eq(mockedEventPublisher),

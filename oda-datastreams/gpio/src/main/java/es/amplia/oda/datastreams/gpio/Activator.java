@@ -1,13 +1,12 @@
 package es.amplia.oda.datastreams.gpio;
 
 import es.amplia.oda.core.commons.gpio.GpioService;
+import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
+import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
 import es.amplia.oda.core.commons.interfaces.DeviceInfoProvider;
 import es.amplia.oda.core.commons.osgi.proxies.EventPublisherProxy;
 import es.amplia.oda.core.commons.osgi.proxies.GpioServiceProxy;
-import es.amplia.oda.core.commons.utils.ConfigurableBundle;
-import es.amplia.oda.core.commons.utils.ConfigurableBundleImpl;
-import es.amplia.oda.core.commons.utils.ConfigurationUpdateHandler;
-import es.amplia.oda.core.commons.utils.ServiceListenerBundle;
+import es.amplia.oda.core.commons.utils.*;
 import es.amplia.oda.datastreams.gpio.configuration.DatastreamsGpioConfigurationHandler;
 
 import org.osgi.framework.BundleActivator;
@@ -15,14 +14,18 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class Activator implements BundleActivator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
-
+    private static final int NUM_THREADS = 10;
 
     private GpioServiceProxy gpioService;
     private EventPublisherProxy eventPublisher;
-    private GpioDatastreamsRegistry registry;
+    private Executor executor = Executors.newFixedThreadPool(NUM_THREADS);
+    private GpioDatastreamsManager manager;
     private ConfigurableBundle configurableBundle;
     private ServiceListenerBundle<GpioService> gpioServiceListener;
     private ServiceListenerBundle<DeviceInfoProvider> deviceInfoProviderServiceListener;
@@ -33,10 +36,16 @@ public class Activator implements BundleActivator {
 
         gpioService = new GpioServiceProxy(bundleContext);
         eventPublisher = new EventPublisherProxy(bundleContext);
-        registry = new GpioDatastreamsRegistry(bundleContext, gpioService, eventPublisher);
+        GpioDatastreamsFactory factory = new GpioDatastreamsFactory(gpioService, eventPublisher, executor);
+        ServiceRegistrationManager<DatastreamsGetter> datastreamsGetterRegistrationManager =
+                new ServiceRegistrationManagerOsgi<>(bundleContext, DatastreamsGetter.class);
+        ServiceRegistrationManager<DatastreamsSetter> datastreamsSetterRegistrationManager =
+                new ServiceRegistrationManagerOsgi<>(bundleContext, DatastreamsSetter.class);
+        manager = new GpioDatastreamsManager(factory, datastreamsGetterRegistrationManager,
+                datastreamsSetterRegistrationManager);
 
         ConfigurationUpdateHandler configurationHandler =
-                new DatastreamsGpioConfigurationHandler(registry, gpioService);
+                new DatastreamsGpioConfigurationHandler(manager, gpioService);
         configurableBundle = new ConfigurableBundleImpl(bundleContext, configurationHandler);
         gpioServiceListener = new ServiceListenerBundle<>(bundleContext, GpioService.class,
                 () -> onServiceChanged(configurationHandler));
@@ -61,7 +70,7 @@ public class Activator implements BundleActivator {
         deviceInfoProviderServiceListener.close();
         gpioServiceListener.close();
         configurableBundle.close();
-        registry.close();
+        manager.close();
         gpioService.close();
         eventPublisher.close();
 

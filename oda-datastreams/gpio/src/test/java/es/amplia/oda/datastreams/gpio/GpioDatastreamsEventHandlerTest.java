@@ -38,12 +38,26 @@ public class GpioDatastreamsEventHandlerTest {
 
     @Before
     public void setUp() {
+        when(mockedGpioService.getPinByIndex(anyInt())).thenReturn(mockedPin);
+        when(mockedPin.isOpen()).thenReturn(false);
+
         testGpioDatastreamsEventHandler = new GpioDatastreamsEventHandler(mockedEventPublisher, TEST_DATASTREAM_ID,
                 TEST_PIN_INDEX, mockedGpioService);
     }
 
     @Test
+    public void testConstructor() {
+        verify(mockedGpioService).getPinByIndex(eq(TEST_PIN_INDEX));
+        verify(mockedPin).isOpen();
+        verify(mockedPin).open();
+        verify(mockedPin).addGpioPinListener(any(GpioPinListener.class));
+        assertEquals(mockedPin, Whitebox.getInternalState(testGpioDatastreamsEventHandler, PIN_FIELD_NAME));
+    }
+
+    @Test
     public void testRegisterToEventSource() {
+        reset(mockedGpioService, mockedPin);
+
         when(mockedGpioService.getPinByIndex(anyInt())).thenReturn(mockedPin);
         when(mockedPin.isOpen()).thenReturn(false);
 
@@ -58,6 +72,8 @@ public class GpioDatastreamsEventHandlerTest {
 
     @Test
     public void testRegisterToEventSourceAlreadyOpenPin()  {
+        reset(mockedGpioService, mockedPin);
+
         when(mockedGpioService.getPinByIndex(anyInt())).thenReturn(mockedPin);
         when(mockedPin.isOpen()).thenReturn(true);
 
@@ -72,6 +88,8 @@ public class GpioDatastreamsEventHandlerTest {
 
     @Test
     public void testRegisterToEventSourceGpioDeviceExceptionCaught() {
+        reset(mockedGpioService, mockedPin);
+
         when(mockedGpioService.getPinByIndex(anyInt())).thenReturn(mockedPin);
         when(mockedPin.isOpen()).thenReturn(false);
         doThrow(GpioDeviceException.class).when(mockedPin).addGpioPinListener(any(GpioPinListener.class));
