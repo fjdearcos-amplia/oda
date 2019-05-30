@@ -9,14 +9,9 @@ import org.osgi.service.event.EventConstants;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class OsgiEventHandler implements EventHandler {
+import static es.amplia.oda.core.commons.utils.Events.*;
 
-    static final String INTERNAL_EVENT_TOPIC = "oda/internal/event";
-    static final String DATASTREAM_ID_PROPERTY_NAME = "datastreamId";
-    static final String DEVICE_ID_PROPERTY_NAME = "deviceId";
-    static final String PATH_PROPERTY_NAME = "path";
-    static final String AT_PROPERTY_NAME = "at";
-    static final String VALUE_PROPERTY_NAME = "value";
+public class OsgiEventHandler implements EventHandler {
 
     private final ServiceRegistration<org.osgi.service.event.EventHandler> registration;
 
@@ -24,7 +19,7 @@ public class OsgiEventHandler implements EventHandler {
 
     public OsgiEventHandler(BundleContext bundleContext) {
         Dictionary<String, Object> props = new Hashtable<>();
-        props.put(EventConstants.EVENT_TOPIC, new String[] { INTERNAL_EVENT_TOPIC });
+        props.put(EventConstants.EVENT_TOPIC, new String[] { EVENT_TOPIC });
         registration =
                 bundleContext.registerService(org.osgi.service.event.EventHandler.class, new EventHandlerImpl(), props);
     }

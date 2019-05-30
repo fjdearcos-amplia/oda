@@ -19,7 +19,8 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import static es.amplia.oda.statemanager.api.OsgiEventHandler.*;
+import static es.amplia.oda.core.commons.utils.Events.*;
+
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -56,7 +57,7 @@ public class OsgiEventHandlerTest {
                 propertiesCaptor.capture());
 
         Dictionary<String, Object> capturedProperties = propertiesCaptor.getValue();
-        assertArrayEquals(new String[] { INTERNAL_EVENT_TOPIC }, (String[]) capturedProperties.get(EventConstants.EVENT_TOPIC));
+        assertArrayEquals(new String[] { EVENT_TOPIC }, (String[]) capturedProperties.get(EventConstants.EVENT_TOPIC));
     }
 
     @Test
@@ -67,7 +68,7 @@ public class OsgiEventHandlerTest {
         props.put(PATH_PROPERTY_NAME, TEST_PATH);
         props.put(AT_PROPERTY_NAME, TEST_AT);
         props.put(VALUE_PROPERTY_NAME, TEST_VALUE);
-        org.osgi.service.event.Event osgiEvent = new org.osgi.service.event.Event(INTERNAL_EVENT_TOPIC, props);
+        org.osgi.service.event.Event osgiEvent = new org.osgi.service.event.Event(EVENT_TOPIC, props);
         Event expectedEvent = new Event(TEST_DATASTREAM_ID, TEST_DEVICE_ID, TEST_PATH, TEST_AT, TEST_VALUE);
 
         verify(mockedContext).registerService(eq(EventHandler.class), eventHandlerCaptor.capture(), any());
