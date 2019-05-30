@@ -5,6 +5,7 @@ import es.amplia.oda.comms.mqtt.api.MqttClientFactory;
 import es.amplia.oda.comms.mqtt.api.MqttException;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
+import es.amplia.oda.core.commons.interfaces.EventPublisher;
 import es.amplia.oda.core.commons.interfaces.Serializer;
 import es.amplia.oda.core.commons.utils.ServiceRegistrationManagerWithKey;
 import es.amplia.oda.event.api.EventDispatcher;
@@ -53,7 +54,7 @@ public class MqttDatastreamsOrchestratorTest {
     @Mock
     private Serializer mockedSerializer;
     @Mock
-    private EventDispatcher mockedEventDispatcher;
+    private EventPublisher mockedEventPublisher;
     @Mock
     private ServiceRegistrationManagerWithKey<String, DatastreamsGetter> mockedDatastreamsGetterRegistrationManager;
     @Mock
@@ -80,7 +81,7 @@ public class MqttDatastreamsOrchestratorTest {
     @Before
     public void setUp() {
         testOrchestrator = new MqttDatastreamsOrchestrator(mockedMqttClientFactory, mockedSerializer,
-                mockedEventDispatcher, mockedDatastreamsGetterRegistrationManager,
+                mockedEventPublisher, mockedDatastreamsGetterRegistrationManager,
                 mockedDatastreamsSetterRegistrationManager);
     }
 
@@ -101,7 +102,7 @@ public class MqttDatastreamsOrchestratorTest {
         verify(mockedClient).connect();
         PowerMockito.verifyNew(MqttDatastreamsPermissionManager.class).withNoArguments();
         PowerMockito.verifyNew(MqttDatastreamsFactory.class).withArguments(eq(mockedClient),
-                eq(mockedPermissionManager), eq(mockedSerializer), eq(mockedEventDispatcher), eq(TEST_READ_REQUEST_TOPIC),
+                eq(mockedPermissionManager), eq(mockedSerializer), eq(mockedEventPublisher), eq(TEST_READ_REQUEST_TOPIC),
                 eq(TEST_READ_RESPONSE_TOPIC), eq(TEST_WRITE_REQUEST_TOPIC), eq(TEST_WRITE_RESPONSE_TOPIC), eq(TEST_EVENT_TOPIC));
         verify(mockedDatastreamsFactory).createDatastreamsEventHandler();
         PowerMockito.verifyNew(MqttDatastreamsManager.class).withArguments(eq(mockedDatastreamsGetterRegistrationManager),
@@ -141,7 +142,7 @@ public class MqttDatastreamsOrchestratorTest {
         verify(mockedClient).connect();
         PowerMockito.verifyNew(MqttDatastreamsPermissionManager.class).withNoArguments();
         PowerMockito.verifyNew(MqttDatastreamsFactory.class).withArguments(eq(mockedClient),
-                eq(mockedPermissionManager), eq(mockedSerializer), eq(mockedEventDispatcher), eq(TEST_READ_REQUEST_TOPIC),
+                eq(mockedPermissionManager), eq(mockedSerializer), eq(mockedEventPublisher), eq(TEST_READ_REQUEST_TOPIC),
                 eq(TEST_READ_RESPONSE_TOPIC), eq(TEST_WRITE_REQUEST_TOPIC), eq(TEST_WRITE_RESPONSE_TOPIC),
                 eq(TEST_EVENT_TOPIC));
         verify(mockedDatastreamsFactory).createDatastreamsEventHandler();

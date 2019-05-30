@@ -1,8 +1,8 @@
 package es.amplia.oda.datastreams.mqtt;
 
 import es.amplia.oda.comms.mqtt.api.MqttClient;
+import es.amplia.oda.core.commons.interfaces.EventPublisher;
 import es.amplia.oda.core.commons.interfaces.Serializer;
-import es.amplia.oda.event.api.EventDispatcher;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class MqttDatastreamsFactoryTest {
     @Mock
     private Serializer mockedSerializer;
     @Mock
-    private EventDispatcher mockedEventDispatcher;
+    private EventPublisher mockedEventPublisher;
 
     private MqttDatastreamsFactory testFactory;
 
@@ -46,7 +46,7 @@ public class MqttDatastreamsFactoryTest {
     @Before
     public void setUp() {
         testFactory = new MqttDatastreamsFactory(mockedClient, mockedPermissionManager, mockedSerializer,
-                mockedEventDispatcher, TEST_READ_REQUEST_TOPIC, TEST_READ_RESPONSE_TOPIC, TEST_WRITE_REQUEST_TOPIC,
+                mockedEventPublisher, TEST_READ_REQUEST_TOPIC, TEST_READ_RESPONSE_TOPIC, TEST_WRITE_REQUEST_TOPIC,
                 TEST_WRITE_RESPONSE_TOPIC, TEST_EVENT_TOPIC);
     }
 
@@ -56,8 +56,8 @@ public class MqttDatastreamsFactoryTest {
 
         testFactory.createDatastreamsEventHandler();
 
-        PowerMockito.verifyNew(MqttDatastreamsEventHandler.class).withArguments(eq(mockedClient),
-                eq(mockedPermissionManager), eq(mockedSerializer), eq(mockedEventDispatcher), eq(TEST_EVENT_TOPIC));
+        PowerMockito.verifyNew(MqttDatastreamsEventHandler.class).withArguments(eq(mockedEventPublisher),
+                eq(mockedClient), eq(mockedPermissionManager), eq(mockedSerializer), eq(TEST_EVENT_TOPIC));
     }
 
     @Test
