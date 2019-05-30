@@ -3,7 +3,7 @@ package es.amplia.oda.datastreams.gpio;
 import es.amplia.oda.core.commons.gpio.GpioService;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
-import es.amplia.oda.event.api.EventDispatcher;
+import es.amplia.oda.core.commons.interfaces.EventPublisher;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -25,18 +25,17 @@ public class GpioDatastreamsRegistry implements AutoCloseable {
 
     private final GpioService gpioService;
 
-    private final EventDispatcher eventDispatcher;
+    private final EventPublisher eventPublisher;
 
-    private final Map<String, GpioDatastreamsEvent> datastreamsEvents = new HashMap<>();
+    private final Map<String, GpioDatastreamsEventHandler> datastreamsEvents = new HashMap<>();
 
     private final List<ServiceRegistration<?>> datastreamsServiceRegistrations = new ArrayList<>();
 
 
-    GpioDatastreamsRegistry(BundleContext bundleContext, GpioService gpioService,
-                                   EventDispatcher eventDispatcher) {
+    GpioDatastreamsRegistry(BundleContext bundleContext, GpioService gpioService, EventPublisher eventPublisher) {
         this.bundleContext = bundleContext;
         this.gpioService = gpioService;
-        this.eventDispatcher = eventDispatcher;
+        this.eventPublisher = eventPublisher;
     }
 
     public void addDatastreamGetter(int pinIndex, String datastreamId) {
@@ -56,7 +55,7 @@ public class GpioDatastreamsRegistry implements AutoCloseable {
     }
 
     public void addDatastreamEvent(int pinIndex, String datastreamId) {
-        GpioDatastreamsEvent datastreamsEventSender;
+        GpioDatastreamsEventHandler datastreamsEventSender;
 
         if (datastreamsEvents.containsKey(datastreamId)) {
             datastreamsEventSender = datastreamsEvents.get(datastreamId);
@@ -64,7 +63,7 @@ public class GpioDatastreamsRegistry implements AutoCloseable {
         }
 
         datastreamsEventSender =
-                GpioDatastreamsFactory.createGpioDatastreamsEvent(datastreamId, pinIndex, gpioService, eventDispatcher);
+                GpioDatastreamsFactory.createGpioDatastreamsEvent(eventPublisher, datastreamId, pinIndex, gpioService);
         datastreamsEventSender.registerToEventSource();
         datastreamsEvents.put(datastreamId, datastreamsEventSender);
     }
@@ -72,7 +71,7 @@ public class GpioDatastreamsRegistry implements AutoCloseable {
     public void close() {
         datastreamsServiceRegistrations.forEach(ServiceRegistration::unregister);
         datastreamsServiceRegistrations.clear();
-        datastreamsEvents.values().forEach(GpioDatastreamsEvent::unregisterFromEventSource);
+        datastreamsEvents.values().forEach(GpioDatastreamsEventHandler::close);
         datastreamsEvents.clear();
     }
 }

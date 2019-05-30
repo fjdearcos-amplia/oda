@@ -3,7 +3,7 @@ package es.amplia.oda.datastreams.gpio;
 import es.amplia.oda.core.commons.gpio.GpioService;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
 import es.amplia.oda.core.commons.interfaces.DatastreamsSetter;
-import es.amplia.oda.event.api.EventDispatcher;
+import es.amplia.oda.core.commons.interfaces.EventPublisher;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,13 +45,13 @@ public class GpioDatastreamsRegistryTest {
     @Mock
     private GpioDatastreamsSetter mockedDatastreamsSetter;
     @Mock
-    private GpioDatastreamsEvent mockedDatastreamsEvent;
+    private GpioDatastreamsEventHandler mockedDatastreamsEvent;
     @Mock
     private ServiceRegistration<DatastreamsGetter> mockedDatastreamGetterRegistration;
     @Mock
     private ServiceRegistration<DatastreamsSetter> mockedDatastreamSetterRegistration;
     @Spy
-    private Map<String, GpioDatastreamsEvent> spiedDatastreamsEvents = new HashMap<>();
+    private Map<String, GpioDatastreamsEventHandler> spiedDatastreamsEvents = new HashMap<>();
     @Spy
     private List<ServiceRegistration<?>> spiedDatastreamsRegistrations = new ArrayList<>();
 
@@ -93,8 +93,8 @@ public class GpioDatastreamsRegistryTest {
     @Test
     public void testAddDatastreamEvent() {
         PowerMockito.mockStatic(GpioDatastreamsFactory.class);
-        PowerMockito.when(GpioDatastreamsFactory.createGpioDatastreamsEvent(anyString(), anyInt(),
-                any(GpioService.class), any(EventDispatcher.class))).thenReturn(mockedDatastreamsEvent);
+        PowerMockito.when(GpioDatastreamsFactory.createGpioDatastreamsEvent(any(EventPublisher.class), anyString(),
+                anyInt(), any(GpioService.class))).thenReturn(mockedDatastreamsEvent);
 
         testRegistry.addDatastreamEvent(TEST_PIN_INDEX, TEST_DATASTREAM_ID);
 
@@ -105,16 +105,16 @@ public class GpioDatastreamsRegistryTest {
 
     @Test
     public void testAddDatastreamEventAlreadyRegisteredDatastreamId() {
-        GpioDatastreamsEvent oldMockedDatastreamsEvent = mock(GpioDatastreamsEvent.class);
+        GpioDatastreamsEventHandler oldMockedDatastreamsEvent = mock(GpioDatastreamsEventHandler.class);
         spiedDatastreamsEvents.put(TEST_DATASTREAM_ID, oldMockedDatastreamsEvent);
 
         PowerMockito.mockStatic(GpioDatastreamsFactory.class);
-        PowerMockito.when(GpioDatastreamsFactory.createGpioDatastreamsEvent(anyString(), anyInt(),
-                any(GpioService.class), any(EventDispatcher.class))).thenReturn(mockedDatastreamsEvent);
+        PowerMockito.when(GpioDatastreamsFactory.createGpioDatastreamsEvent(any(EventPublisher.class), anyString(),
+                anyInt(), any(GpioService.class))).thenReturn(mockedDatastreamsEvent);
 
         testRegistry.addDatastreamEvent(TEST_PIN_INDEX, TEST_DATASTREAM_ID);
 
-        verify(oldMockedDatastreamsEvent).unregisterFromEventSource();
+        verify(oldMockedDatastreamsEvent).close();
         verify(mockedDatastreamsEvent).registerToEventSource();
         verify(spiedDatastreamsEvents).put(eq(TEST_DATASTREAM_ID), eq(mockedDatastreamsEvent));
         assertNotEquals(oldMockedDatastreamsEvent, spiedDatastreamsEvents.get(TEST_DATASTREAM_ID));
@@ -127,8 +127,8 @@ public class GpioDatastreamsRegistryTest {
         ServiceRegistration<?> mockedRegistration2 = mock(ServiceRegistration.class);
         spiedDatastreamsRegistrations.add(mockedRegistration1);
         spiedDatastreamsRegistrations.add(mockedRegistration2);
-        GpioDatastreamsEvent mockedDatastreamsEvent1 = mock(GpioDatastreamsEvent.class);
-        GpioDatastreamsEvent mockedDatastreamsEvent2 = mock(GpioDatastreamsEvent.class);
+        GpioDatastreamsEventHandler mockedDatastreamsEvent1 = mock(GpioDatastreamsEventHandler.class);
+        GpioDatastreamsEventHandler mockedDatastreamsEvent2 = mock(GpioDatastreamsEventHandler.class);
         spiedDatastreamsEvents.put("datastream1", mockedDatastreamsEvent1);
         spiedDatastreamsEvents.put("datastream2", mockedDatastreamsEvent2);
 

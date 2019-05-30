@@ -1,7 +1,7 @@
 package es.amplia.oda.datastreams.gpio;
 
 import es.amplia.oda.core.commons.gpio.GpioService;
-import es.amplia.oda.event.api.EventDispatcher;
+import es.amplia.oda.core.commons.interfaces.EventPublisher;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ public class GpioDatastreamsFactoryTest {
     @Mock
     private GpioService mockedGpioService;
     @Mock
-    private EventDispatcher mockedEventDispatcher;
+    private EventPublisher mockedEventPublisher;
     @Mock
     private Executor mockedExecutor;
 
@@ -34,7 +34,7 @@ public class GpioDatastreamsFactoryTest {
     @Mock
     private GpioDatastreamsSetter mockedGpioDatastreamsSetter;
     @Mock
-    private GpioDatastreamsEvent mockedGpioDatastreamsEvent;
+    private GpioDatastreamsEventHandler mockedGpioDatastreamsEventHandler;
 
     @Test
     public void testCreateGpioDatastreamsGetter() throws Exception {
@@ -64,15 +64,14 @@ public class GpioDatastreamsFactoryTest {
 
     @Test
     public void testCreateGpioDatastreamsEvent() throws Exception {
-        PowerMockito.whenNew(GpioDatastreamsEvent.class).withAnyArguments().thenReturn(mockedGpioDatastreamsEvent);
+        PowerMockito.whenNew(GpioDatastreamsEventHandler.class).withAnyArguments().thenReturn(mockedGpioDatastreamsEventHandler);
 
-        GpioDatastreamsEvent event =
-                GpioDatastreamsFactory.createGpioDatastreamsEvent(TEST_DATASTREAM_ID, TEST_PIN_INDEX,
-                        mockedGpioService, mockedEventDispatcher);
+        GpioDatastreamsEventHandler event =
+                GpioDatastreamsFactory.createGpioDatastreamsEvent(mockedEventPublisher, TEST_DATASTREAM_ID,
+                        TEST_PIN_INDEX, mockedGpioService);
 
-        assertEquals(mockedGpioDatastreamsEvent, event);
-        PowerMockito.verifyNew(GpioDatastreamsEvent.class)
-                .withArguments(eq(TEST_DATASTREAM_ID), eq(TEST_PIN_INDEX), eq(mockedGpioService),
-                        eq(mockedEventDispatcher));
+        assertEquals(mockedGpioDatastreamsEventHandler, event);
+        PowerMockito.verifyNew(GpioDatastreamsEventHandler.class).withArguments(eq(mockedEventPublisher),
+                eq(TEST_DATASTREAM_ID), eq(TEST_PIN_INDEX), eq(mockedGpioService));
     }
 }

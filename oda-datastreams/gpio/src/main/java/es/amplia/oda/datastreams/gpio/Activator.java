@@ -2,13 +2,13 @@ package es.amplia.oda.datastreams.gpio;
 
 import es.amplia.oda.core.commons.gpio.GpioService;
 import es.amplia.oda.core.commons.interfaces.DeviceInfoProvider;
+import es.amplia.oda.core.commons.osgi.proxies.EventPublisherProxy;
 import es.amplia.oda.core.commons.osgi.proxies.GpioServiceProxy;
 import es.amplia.oda.core.commons.utils.ConfigurableBundle;
 import es.amplia.oda.core.commons.utils.ConfigurableBundleImpl;
 import es.amplia.oda.core.commons.utils.ConfigurationUpdateHandler;
 import es.amplia.oda.core.commons.utils.ServiceListenerBundle;
 import es.amplia.oda.datastreams.gpio.configuration.DatastreamsGpioConfigurationHandler;
-import es.amplia.oda.event.api.EventDispatcherProxy;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -19,14 +19,11 @@ public class Activator implements BundleActivator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
+
     private GpioServiceProxy gpioService;
-
-    private EventDispatcherProxy eventDispatcher;
-
+    private EventPublisherProxy eventPublisher;
     private GpioDatastreamsRegistry registry;
-
     private ConfigurableBundle configurableBundle;
-
     private ServiceListenerBundle<GpioService> gpioServiceListener;
     private ServiceListenerBundle<DeviceInfoProvider> deviceInfoProviderServiceListener;
 
@@ -35,8 +32,8 @@ public class Activator implements BundleActivator {
         LOGGER.info("Starting GPIO datastreams bundle");
 
         gpioService = new GpioServiceProxy(bundleContext);
-        eventDispatcher = new EventDispatcherProxy(bundleContext);
-        registry = new GpioDatastreamsRegistry(bundleContext, gpioService, eventDispatcher);
+        eventPublisher = new EventPublisherProxy(bundleContext);
+        registry = new GpioDatastreamsRegistry(bundleContext, gpioService, eventPublisher);
 
         ConfigurationUpdateHandler configurationHandler =
                 new DatastreamsGpioConfigurationHandler(registry, gpioService);
@@ -66,7 +63,7 @@ public class Activator implements BundleActivator {
         configurableBundle.close();
         registry.close();
         gpioService.close();
-        eventDispatcher.close();
+        eventPublisher.close();
 
         LOGGER.info("GPIO datastreams bundle stopped");
     }

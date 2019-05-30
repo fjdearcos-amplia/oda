@@ -1,7 +1,7 @@
 package es.amplia.oda.datastreams.gpio;
 
 import es.amplia.oda.core.commons.gpio.GpioService;
-import es.amplia.oda.event.api.EventDispatcher;
+import es.amplia.oda.core.commons.interfaces.EventPublisher;
 
 import java.util.concurrent.Executor;
 
@@ -20,8 +20,8 @@ class GpioDatastreamsFactory {
         return new GpioDatastreamsSetter(datastreamId, pinIndex, gpioService, executor);
     }
 
-    static GpioDatastreamsEvent createGpioDatastreamsEvent(String datastreamId, int pinIndex, GpioService gpioService,
-                                                           EventDispatcher eventDispatcher) {
-        return new GpioDatastreamsEvent(datastreamId, pinIndex, gpioService, eventDispatcher);
+    static GpioDatastreamsEventHandler createGpioDatastreamsEvent(EventPublisher eventPublisher, String datastreamId,
+                                                                  int pinIndex, GpioService gpioService) {
+        return new GpioDatastreamsEventHandler(eventPublisher, datastreamId, pinIndex, gpioService);
     }
 }
