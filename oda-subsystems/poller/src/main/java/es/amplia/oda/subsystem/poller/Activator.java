@@ -1,8 +1,9 @@
 package es.amplia.oda.subsystem.poller;
 
+import es.amplia.oda.core.commons.interfaces.DatastreamsEventHandler;
 import es.amplia.oda.core.commons.interfaces.DatastreamsGetter;
+import es.amplia.oda.core.commons.osgi.proxies.EventPublisherProxy;
 import es.amplia.oda.core.commons.utils.*;
-import es.amplia.oda.event.api.EventDispatcherProxy;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -10,21 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Activator implements BundleActivator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
     private static final int NUM_THREADS = 10;
-    private static final int STOP_OPERATIONS_TIMEOUT = 10;
-
-
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(NUM_THREADS);
 
     private DatastreamsGettersFinderImpl datastreamsGetterFinder;
-    private EventDispatcherProxy eventDispatcher;
+    private EventPublisherProxy eventPublisher;
+    private Scheduler scheduler;
     private ConfigurableBundle configurableBundle;
 
 
@@ -35,9 +31,11 @@ public class Activator implements BundleActivator {
         ServiceLocator<DatastreamsGetter> datastreamsGettersLocator =
                 new ServiceLocatorOsgi<>(bundleContext, DatastreamsGetter.class);
         datastreamsGetterFinder = new DatastreamsGettersFinderImpl(datastreamsGettersLocator);
-        eventDispatcher = new EventDispatcherProxy(bundleContext);
-        Poller poller = new PollerImpl(datastreamsGetterFinder, eventDispatcher);
-        PollerConfigurationUpdateHandler configHandler = new PollerConfigurationUpdateHandler(executor, poller);
+        eventPublisher = new EventPublisherProxy(bundleContext);
+        DatastreamsEventHandler datastreamsEventHandler = new PollerDatastreamsEventHandler(eventPublisher);
+        Poller poller = new PollerImpl(datastreamsGetterFinder, datastreamsEventHandler);
+        scheduler = new SchedulerImpl(Executors.newScheduledThreadPool(NUM_THREADS));
+        PollerConfigurationUpdateHandler configHandler = new PollerConfigurationUpdateHandler(poller, scheduler);
         configurableBundle = new ConfigurableBundleImpl(bundleContext, configHandler);
         
         LOGGER.info("Poller Subsystem started");
@@ -48,21 +46,10 @@ public class Activator implements BundleActivator {
         LOGGER.info("Stopping Poller Subsystem");
 
         configurableBundle.close();
-        stopPendingOperations();
+        scheduler.close();
         datastreamsGetterFinder.close();
-        eventDispatcher.close();
+        eventPublisher.close();
 
         LOGGER.info("Poller Subsystem stopped");
-    }
-
-    private void stopPendingOperations() {
-        executor.shutdown();
-        try {
-            executor.awaitTermination(STOP_OPERATIONS_TIMEOUT, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            LOGGER.error("The shutdown of the pool of threads its taking more than {} seconds. Will not wait longer.",
-                    STOP_OPERATIONS_TIMEOUT);
-            Thread.currentThread().interrupt();
-        }
     }
 }

@@ -3,13 +3,13 @@ package es.amplia.oda.datastreams.gpio;
 import es.amplia.oda.core.commons.gpio.GpioDeviceException;
 import es.amplia.oda.core.commons.gpio.GpioPin;
 import es.amplia.oda.core.commons.gpio.GpioService;
-import es.amplia.oda.core.commons.interfaces.DatastreamsEventHandler;
+import es.amplia.oda.core.commons.interfaces.AbstractDatastreamsEventHandler;
 import es.amplia.oda.core.commons.interfaces.EventPublisher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class GpioDatastreamsEventHandler extends DatastreamsEventHandler implements AutoCloseable {
+class GpioDatastreamsEventHandler extends AbstractDatastreamsEventHandler implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GpioDatastreamsEventHandler.class);
 

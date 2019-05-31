@@ -4,7 +4,7 @@ import es.amplia.oda.comms.mqtt.api.MqttClient;
 import es.amplia.oda.comms.mqtt.api.MqttException;
 import es.amplia.oda.comms.mqtt.api.MqttMessage;
 import es.amplia.oda.comms.mqtt.api.MqttMessageListener;
-import es.amplia.oda.core.commons.interfaces.DatastreamsEventHandler;
+import es.amplia.oda.core.commons.interfaces.AbstractDatastreamsEventHandler;
 import es.amplia.oda.core.commons.interfaces.EventPublisher;
 import es.amplia.oda.core.commons.interfaces.Serializer;
 
@@ -16,7 +16,7 @@ import java.util.List;
 
 import static es.amplia.oda.datastreams.mqtt.MqttDatastreams.*;
 
-class MqttDatastreamsEventHandler extends DatastreamsEventHandler implements AutoCloseable {
+class MqttDatastreamsEventHandler extends AbstractDatastreamsEventHandler implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MqttDatastreamsEventHandler.class);
 
