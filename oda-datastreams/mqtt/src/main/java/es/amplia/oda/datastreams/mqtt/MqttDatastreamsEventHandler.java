@@ -30,8 +30,7 @@ class MqttDatastreamsEventHandler extends AbstractDatastreamsEventHandler implem
 
     MqttDatastreamsEventHandler(EventPublisher eventPublisher, MqttClient mqttClient,
                                 MqttDatastreamsPermissionManager mqttDatastreamsPermissionManager,
-                                Serializer serializer, String eventTopic)
-            throws MqttException {
+                                Serializer serializer, String eventTopic) {
         super(eventPublisher);
         this.mqttClient = mqttClient;
         this.mqttDatastreamsPermissionManager = mqttDatastreamsPermissionManager;
@@ -42,7 +41,7 @@ class MqttDatastreamsEventHandler extends AbstractDatastreamsEventHandler implem
     }
 
     @Override
-    public void registerToEventSource() throws MqttException {
+    public void registerToEventSource() {
         mqttClient.subscribe(deviceEventTopic, new DeviceEventMessageListener());
         mqttClient.subscribe(datastreamEventTopic, new DatastreamEventMessageListener());
     }

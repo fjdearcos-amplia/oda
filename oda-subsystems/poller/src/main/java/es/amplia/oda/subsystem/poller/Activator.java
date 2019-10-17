@@ -18,7 +18,7 @@ public class Activator implements BundleActivator {
 
     private static final int NUM_THREADS = 10;
 
-    private DatastreamsGettersFinderImpl datastreamsGetterFinder;
+    private DatastreamsGettersFinderImpl datastreamsGettersFinder;
     private EventPublisherProxy eventPublisher;
     private Scheduler scheduler;
     private ConfigurableBundle configurableBundle;
@@ -30,10 +30,10 @@ public class Activator implements BundleActivator {
 
         ServiceLocator<DatastreamsGetter> datastreamsGettersLocator =
                 new ServiceLocatorOsgi<>(bundleContext, DatastreamsGetter.class);
-        datastreamsGetterFinder = new DatastreamsGettersFinderImpl(datastreamsGettersLocator);
+        datastreamsGettersFinder = new DatastreamsGettersFinderImpl(datastreamsGettersLocator);
         eventPublisher = new EventPublisherProxy(bundleContext);
         DatastreamsEventHandler datastreamsEventHandler = new PollerDatastreamsEventHandler(eventPublisher);
-        Poller poller = new PollerImpl(datastreamsGetterFinder, datastreamsEventHandler);
+        Poller poller = new PollerImpl(datastreamsGettersFinder, datastreamsEventHandler);
         scheduler = new SchedulerImpl(Executors.newScheduledThreadPool(NUM_THREADS));
         PollerConfigurationUpdateHandler configHandler = new PollerConfigurationUpdateHandler(poller, scheduler);
         configurableBundle = new ConfigurableBundleImpl(bundleContext, configHandler);
@@ -47,7 +47,7 @@ public class Activator implements BundleActivator {
 
         configurableBundle.close();
         scheduler.close();
-        datastreamsGetterFinder.close();
+        datastreamsGettersFinder.close();
         eventPublisher.close();
 
         LOGGER.info("Poller Subsystem stopped");

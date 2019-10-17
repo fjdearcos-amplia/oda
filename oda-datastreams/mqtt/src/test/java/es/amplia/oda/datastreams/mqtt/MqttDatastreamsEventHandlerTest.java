@@ -66,20 +66,6 @@ public class MqttDatastreamsEventHandlerTest {
     }
 
     @Test
-    public void testConstructorRegisterToEventSourceCaughtMqttException() throws MqttException {
-        reset(mockedClient);
-        doThrow(new MqttException("")).when(mockedClient).subscribe(anyString(), any());
-
-        new MqttDatastreamsEventHandler(mockedEventPublisher, mockedClient, mockedPermissionManager, mockedSerializer,
-                TEST_EVENT_TOPIC);
-
-        assertEquals(TEST_SUBSCRIBED_DEVICE_EVENT_TOPIC, Whitebox.getInternalState(testHandler, "deviceEventTopic"));
-        assertEquals(TEST_SUBSCRIBED_DATASTREAM_EVENT_TOPIC,
-                Whitebox.getInternalState(testHandler, "datastreamEventTopic"));
-        verify(mockedClient).subscribe(eq(TEST_SUBSCRIBED_DEVICE_EVENT_TOPIC), any(MqttMessageListener.class));
-    }
-
-    @Test
     public void testDeviceEventMessageListenerMessageArriveWithPath() throws MqttException, IOException {
         String testTopic = TEST_EVENT_TOPIC + MqttDatastreams.TOPIC_LEVEL_SEPARATOR + TEST_DEVICE_ID;
         ArgumentCaptor<MqttDatastreamsEventHandler.DeviceEventMessageListener> listenerCaptor =
