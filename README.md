@@ -1,4 +1,4 @@
-# ODA
+# ODA [![Build Status](https://travis-ci.org/fjdearcos-amplia/oda.svg?branch=master)](https://travis-ci.org/fjdearcos-amplia/oda)
 
 OpenGate Device Agent was created to provide an easy way to integrate your devices and business data in our IoT Platform OpenGate. From this goal, ODA has grow integrating new protocols and platforms. ODA supports HTTP, WebSocket, MQTT, CoAP communication protocols and integrates with third party services as SCADA through DNP3 and IEC-104. ODA also acts as a concentrator of constrained devices in your local network using MQTT, Modbus, RS232, RS485, GPIOs... We are currently working on Edge Computing features offering more intelligence to work with your data in real-time and reducing data consumption.  
 
