@@ -2,10 +2,24 @@ language: java
 jdk:
 - openjdk8
 
-cache:
-  directories:
-  - $HOME/.m2
+sudo: false
+install: true
+
+addons:
+  sonarcloud:
+    organization: "fjdearcos-amplia"
+    token:
+      secure: "C9Q42z1TesBY8NrNjzkBGjPoj3dLS8Oyn1Ct1G5rIMxbgvMXo+J3qK5xzBpFGLxurLFJVotfvvHmL//OZYsIUpT/CC+6/b8UwaqiAR1pRoqijKRm906NaS6rH9hfP2eK3gHsaGok0JknEbjVzyhUfxOxUvyNycTqvdaHW/zR0cR2FvQROm3GMhiD1l6fiNNPGrlrYSvjq1crkEpn4JMW4VAsnKmoMftPd+uH73fIV0i3uHlAhShuP5wN3dm4vSgs7wAChCnvYxBvCqdkTK4WmuZQBAfJBFcfOQzjqOONid+Xksh8N76eyvlY9TVPm6oScz4Y+QHRuqHG+5jmhna9TE0v4W7eFHNuKobKBs14fzknaEfznoXRPqR5r98spAisXCA+OC5Cn3x03zpO0Lt35NkJEIRqdxI10hcRnkOtU6YGnRs+9iPBoO4COm3HxKCC+pfwCB8Gxx+lIVrC9E8FHgflRzFYYfl+RfPoxaUZvTMsJX45yMfVkesUfO+sgCEZ5C543FYbH0HSrN2qbmLaxT+RM2B8NHa5b0zfnTa0nlBZr2+4eBQf5DtqYuIUlYIFfHxTLRN+SFxyk133qZZaSHHDEyNAo9OgigqjYN1lBUVY6aLNiyvyiAa8KqbQSygkRkfLXDLYztvTut9BD28zXDBZaGS9Iy1gsdpGHmkW+44="
 
 before_install:
   - sudo apt-get install -y mercurial cmake
   - ./install-oda-external-dependencies.sh
+
+script:
+  - mvn clean verify sonar:sonar -Pcoverage
+
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.sonar/cache
+
